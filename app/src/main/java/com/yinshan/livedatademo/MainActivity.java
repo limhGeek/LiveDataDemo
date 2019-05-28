@@ -1,53 +1,30 @@
 package com.yinshan.livedatademo;
 
-import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.yinshan.livedatademo.bean.Result;
-import com.yinshan.livedatademo.bean.User;
-import com.yinshan.livedatademo.model.LoginViewModel;
-import com.yinshan.livedatademo.widget.LoadingDialog;
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.LifecycleRegistry;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 
-public class MainActivity extends AppCompatActivity {
+import com.hjq.toast.ToastUtils;
+import com.yinshan.livedatademo.bean.Result;
+import com.yinshan.livedatademo.model.UserViewModel;
+
+public class MainActivity extends BaseActivity<UserViewModel> {
 
     private String TAG = "MainActivity";
     private EditText editName;
     private EditText editPass;
     private TextView btnLogin;
-    private LoadingDialog loadingDialog;
-    private LoginViewModel model;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    void findView() {
         setContentView(R.layout.activity_main);
-        initView();
     }
 
-    public void initView() {
-        loadingDialog = new LoadingDialog.Builder(MainActivity.this)
-                .setBgDark(true)
-                .setMsg("登录中...")
-                .create();
-        model = ViewModelProviders.of(this).get(LoginViewModel.class);
-        model.getModel().observe(this, new Observer<Result<User>>() {
-            @Override
-            public void onChanged(Result<User> userResult) {
-                if (null != loadingDialog && loadingDialog.isShowing()) {
-                    loadingDialog.dismiss();
-                }
-                Toast.makeText(MainActivity.this, userResult.getMsg(), Toast.LENGTH_SHORT).show();
-            }
-        });
+    @Override
+    void initViews() {
+
         editName = findViewById(R.id.editName);
         editPass = findViewById(R.id.editPass);
         btnLogin = findViewById(R.id.btnLogin);
@@ -57,13 +34,23 @@ public class MainActivity extends AppCompatActivity {
                 login(editName.getText().toString(), editPass.getText().toString());
             }
         });
+        viewModel.getModel().observe(this, new Observer<Result>() {
+            @Override
+            public void onChanged(Result result) {
+                ToastUtils.show("登录成功");
+                viewModel.getUserInfo();
+            }
+        });
     }
 
+    @Override
+    void initDatas() {
+
+    }
+
+
     private void login(String name, String password) {
-        if (null != loadingDialog && !loadingDialog.isShowing()) {
-            loadingDialog.show();
-        }
-        model.login(name, password);
+        viewModel.login(name, password);
     }
 
 }

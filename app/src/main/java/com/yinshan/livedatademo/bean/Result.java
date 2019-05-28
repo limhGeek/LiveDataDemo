@@ -5,10 +5,10 @@ package com.yinshan.livedatademo.bean;
  * @function
  * @date 2019/2/14 14:12
  */
-public class Result<T> {
+public class Result {
     private int code;
     private String msg;
-    private T data;
+    private Object data;
 
     public Result(int code, String msg) {
         this.code = code;
@@ -31,11 +31,20 @@ public class Result<T> {
         this.msg = msg;
     }
 
-    public T getData() {
+    public Object getData() {
         return data;
     }
 
-    public void setData(T data) {
+    public void setData(Object data) {
         this.data = data;
+    }
+
+    @Override
+    public String toString() {
+        return "Result{" +
+                "code=" + code +
+                ", msg='" + msg + '\'' +
+                ", data=" + data +
+                '}';
     }
 }
