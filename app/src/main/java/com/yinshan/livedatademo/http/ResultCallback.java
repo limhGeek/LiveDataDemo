@@ -3,7 +3,6 @@ package com.yinshan.livedatademo.http;
 import android.app.Activity;
 import android.os.Build;
 
-import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.hjq.toast.ToastUtils;
 import com.lzy.okgo.callback.StringCallback;
@@ -12,7 +11,6 @@ import com.lzy.okgo.model.Response;
 import com.lzy.okgo.request.base.Request;
 import com.yinshan.livedatademo.AppConfig;
 import com.yinshan.livedatademo.BuildConfig;
-import com.yinshan.livedatademo.bean.Result;
 import com.yinshan.livedatademo.utils.GsonUtils;
 import com.yinshan.livedatademo.utils.Logs;
 import com.yinshan.livedatademo.utils.NetworkUtils;
@@ -22,7 +20,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.net.ConnectException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
@@ -32,11 +29,11 @@ import java.net.UnknownHostException;
  * @function
  * @date 2019/5/29 15:26
  */
-public abstract class MyCallBack<T> extends StringCallback {
+public abstract class ResultCallback<T> extends StringCallback {
     private String TAG = "Http";
     private Class<T> clazz;
 
-    public MyCallBack() {
+    protected ResultCallback() {
         ParameterizedType type = (ParameterizedType) this.getClass()
                 .getGenericSuperclass();
         this.clazz = (Class<T>) type.getActualTypeArguments()[0];
@@ -55,9 +52,11 @@ public abstract class MyCallBack<T> extends StringCallback {
             request.headers("Token", (String) SpUtils.get(Comm.SP_TOKEN, ""));
         }
         request.headers("version", BuildConfig.VERSION_NAME);
-        request.headers("model", Build.MODEL.replace(" ", "_") + Build.VERSION.RELEASE);
-        Logs.d(TAG, "=========================================================");
-        Logs.d(TAG, "请求链接：" + request.getMethod() + "  " + request.getBaseUrl());
+        request.headers("model", Build.MODEL.replace(" ", "_") + "_" + Build.VERSION.RELEASE);
+        Logs.d(TAG, " ");
+        Logs.d(TAG, " ");
+        Logs.i(TAG, "=========================================================");
+        Logs.i(TAG, "请求链接：" + request.getMethod() + "  " + request.getBaseUrl());
         Logs.i(TAG, "请求头：" + request.getHeaders().toString());
         Logs.i(TAG, "请求参数：" + request.getParams().toString());
         showLoading();
@@ -74,8 +73,11 @@ public abstract class MyCallBack<T> extends StringCallback {
             } else {
                 onSuccess(GsonUtils.str2Bean(object.optString("data"), clazz));
             }
+            Logs.d(TAG, "请求结果：" + response.body());
+            Logs.i(TAG, "=========================================================");
         } catch (JSONException e) {
-            Logs.d(TAG, "onSuccess:" + e.getMessage());
+            Logs.e(TAG, "onSuccess:" + e.getMessage());
+            Logs.i(TAG, "=========================================================");
             onFailure("解析错误");
         }
     }
@@ -84,8 +86,8 @@ public abstract class MyCallBack<T> extends StringCallback {
     public void onError(Response<String> response) {
         super.onError(response);
         hideLoading();
-        Logs.i(TAG, "请求异常信息：" + response.getException().getMessage());
-        Logs.d(TAG, "=========================================================");
+        Logs.e(TAG, "请求异常信息：" + response.getException().getMessage());
+        Logs.i(TAG, "=========================================================");
         if (null == response.getException()) return;
         Throwable e = response.getException();
         String message;

@@ -7,7 +7,8 @@ import android.widget.TextView;
 import androidx.lifecycle.Observer;
 
 import com.hjq.toast.ToastUtils;
-import com.yinshan.livedatademo.bean.Result;
+import com.yinshan.livedatademo.bean.Token;
+import com.yinshan.livedatademo.bean.User;
 import com.yinshan.livedatademo.model.UserViewModel;
 
 public class MainActivity extends BaseActivity<UserViewModel> {
@@ -37,8 +38,13 @@ public class MainActivity extends BaseActivity<UserViewModel> {
         viewModel.getModel().observe(this, new Observer<Object>() {
             @Override
             public void onChanged(Object result) {
-                ToastUtils.show("登录成功");
-                viewModel.getUserInfo();
+                if (result instanceof Token) {
+                    ToastUtils.show("登录成功");
+                    //获取用户信息
+                    viewModel.getUserInfo();
+                } else if (result instanceof User) {
+                    ToastUtils.show("用户信息数据：" + result.toString());
+                }
             }
         });
     }
@@ -48,7 +54,11 @@ public class MainActivity extends BaseActivity<UserViewModel> {
 
     }
 
-
+    /**
+     * 开始登录
+     * @param name 用户名
+     * @param password 密码
+     */
     private void login(String name, String password) {
         viewModel.login(name, password);
     }

@@ -16,7 +16,7 @@ import com.yinshan.livedatademo.utils.TUtil;
  */
 public class AbsViewModel<T extends AbsRepository> extends AndroidViewModel {
 
-    public T mRepository;
+    protected T mRepository;
 
     public MutableLiveData<Object> getModel() {
         return mRepository.retData;
