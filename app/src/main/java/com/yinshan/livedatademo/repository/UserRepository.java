@@ -5,9 +5,10 @@ import android.app.Activity;
 import com.hjq.toast.ToastUtils;
 import com.lzy.okgo.OkGo;
 import com.yinshan.livedatademo.AppConfig;
-import com.yinshan.livedatademo.bean.Result;
+import com.yinshan.livedatademo.bean.Token;
+import com.yinshan.livedatademo.bean.User;
 import com.yinshan.livedatademo.http.Comm;
-import com.yinshan.livedatademo.http.ResultCallBack;
+import com.yinshan.livedatademo.http.MyCallBack;
 import com.yinshan.livedatademo.mvvm.AbsRepository;
 import com.yinshan.livedatademo.utils.Logs;
 import com.yinshan.livedatademo.utils.SpUtils;
@@ -25,10 +26,10 @@ public class UserRepository extends AbsRepository {
 
     public void login(String username, String password) {
 
-        OkGo.<Result>post(Comm.URL_LOGIN)
+        OkGo.<String>post(Comm.URL_LOGIN)
                 .params("phone", username)
                 .params("password", password)
-                .execute(new ResultCallBack() {
+                .execute(new MyCallBack<Token>() {
                     @Override
                     protected void showLoading() {
                         super.showLoading();
@@ -42,28 +43,29 @@ public class UserRepository extends AbsRepository {
                     }
 
                     @Override
-                    public void onSuccess(Result t) {
+                    protected void hideLoading() {
+                        super.hideLoading();
                         if (null != loadingDialog && loadingDialog.isShowing()) {
                             loadingDialog.dismiss();
                         }
-                        if (0 != t.getCode()) {
-                            ToastUtils.show(t.getMsg());
-                        } else {
-                            SpUtils.put(AppConfig.getInstance().getCurActivity(), Comm.SP_TOKEN, t.getData().toString());
-                            postValue(t);
-                        }
+                    }
+
+                    @Override
+                    public void onSuccess(Token token) {
+                        SpUtils.put(Comm.SP_TOKEN, token.getToken());
+                        Logs.d(TAG, "Token=" + token.getToken());
+                        postValue(token);
                     }
                 });
     }
 
     public void getUserInfo() {
-        String token = (String) SpUtils.get(AppConfig.getInstance().getCurActivity(), Comm.SP_TOKEN, "");
-        OkGo.<Result>get(Comm.URL_USERINFO)
-                .headers("Token", token)
-                .execute(new ResultCallBack() {
+        OkGo.<String>get(Comm.URL_USERINFO)
+                .execute(new MyCallBack<User>() {
                     @Override
-                    public void onSuccess(Result t) {
-                        Logs.d(TAG, "USER=" + t.toString());
+                    public void onSuccess(User user) {
+                        Logs.d(TAG, "USER=" + user.toString());
+                        ToastUtils.show(user.toString());
                     }
                 });
     }

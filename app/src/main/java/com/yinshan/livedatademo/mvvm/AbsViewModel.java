@@ -6,7 +6,6 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 
-import com.yinshan.livedatademo.bean.Result;
 import com.yinshan.livedatademo.utils.TUtil;
 
 
@@ -19,7 +18,7 @@ public class AbsViewModel<T extends AbsRepository> extends AndroidViewModel {
 
     public T mRepository;
 
-    public MutableLiveData<Result> getModel() {
+    public MutableLiveData<Object> getModel() {
         return mRepository.retData;
     }
 

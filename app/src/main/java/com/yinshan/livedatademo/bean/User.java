@@ -8,6 +8,7 @@ package com.yinshan.livedatademo.bean;
 public class User {
     private String userName;
     private String password;
+    private String phone;
 
     public User(String userName, String password) {
         this.userName = userName;
@@ -28,5 +29,26 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    @Override
+    public String toString() {
+        return "{\"User\":{"
+                + "\"userName\":\""
+                + userName + '\"'
+                + ",\"password\":\""
+                + password + '\"'
+                + ",\"phone\":\""
+                + phone + '\"'
+                + "}}";
+
     }
 }

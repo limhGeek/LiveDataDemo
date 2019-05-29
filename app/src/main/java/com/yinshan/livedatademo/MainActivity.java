@@ -34,9 +34,9 @@ public class MainActivity extends BaseActivity<UserViewModel> {
                 login(editName.getText().toString(), editPass.getText().toString());
             }
         });
-        viewModel.getModel().observe(this, new Observer<Result>() {
+        viewModel.getModel().observe(this, new Observer<Object>() {
             @Override
-            public void onChanged(Result result) {
+            public void onChanged(Object result) {
                 ToastUtils.show("登录成功");
                 viewModel.getUserInfo();
             }

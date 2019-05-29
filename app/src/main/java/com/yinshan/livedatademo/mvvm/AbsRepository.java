@@ -3,8 +3,6 @@ package com.yinshan.livedatademo.mvvm;
 
 import androidx.lifecycle.MutableLiveData;
 
-import com.yinshan.livedatademo.bean.Result;
-
 /**
  * @author limh
  * @function
@@ -13,13 +11,13 @@ import com.yinshan.livedatademo.bean.Result;
 public abstract class AbsRepository {
 
 
-    public MutableLiveData<Result> retData;
+    MutableLiveData<Object> retData;
 
     public AbsRepository() {
         retData = new MutableLiveData<>();
     }
 
-    protected void postValue(Result obj) {
+    protected void postValue(Object obj) {
         if (null != retData) {
             retData.postValue(obj);
         }
